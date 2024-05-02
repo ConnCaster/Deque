@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-const int kFive = 5;
+const unsigned int kFive = 5;
 
 template<class T>
 class Deque {
@@ -36,59 +36,64 @@ public:
 
     void pop_front();
 
+    auto get_buckets_number() const {
+        return number_buckets_;
+    }
+
+    auto get_front() const {
+        return front_;
+    }
+
+    auto get_rear() const {
+        return rear_;
+    }
+
 private:
-    T **buckets_;
     size_t size_;
     size_t number_buckets_;
-    std::array<int, 2> front_;
-    std::array<int, 2> rear_;
+    std::array<long, 2> front_;
+    std::array<long, 2> rear_;
+    T **buckets_;
 };
 
 template<class T>
 Deque<T>::Deque()
-        : buckets_{nullptr}, size_{0}, number_buckets_{0}, front_{-1, 0}, rear_{-1, 0} {}
+        : size_{0}, number_buckets_{0}, front_{-1, 0}, rear_{-1, 0}, buckets_{nullptr} {}
 
 template<class T>
-Deque<T>::Deque(const Deque &other)
-        : size_(other.size_),
-          number_buckets_(other.number_buckets_),
-          front_(other.front_),
-          rear_(other.rear_)
-{
-    delete[] buckets_;
-    buckets_ = other.buckets_;
+Deque<T>::Deque(size_t count)
+        : size_{count},
+          number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+          front_{0, 0},
+          rear_{0, 0}{
+    buckets_ = new T *[number_buckets_];
+    for (int i = 0; i < number_buckets_; ++i) {
+        buckets_[i] = new T[kFive]{0};
+    }
+    rear_[0] = number_buckets_ - 1;
+    rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
 }
 
-//template <class T>
-//Deque<T>::Deque(size_t count) : size_(count) {
-//    const double kFiveDouble = 5.0;
-//    number_buckets_ = ceil(static_cast<int>(count) / kFiveDouble);
-//    buckets_ = new T*[number_buckets_];
-//    front_ = {number_buckets_ / 2, 0};
-//    rear_ = {number_buckets_ / 2, 0};
-//}
-//
-//template <class T>
-//Deque<T>::Deque(size_t count, const T& value) : size_(count) {
-//    const double kFiveDouble = 5.0;
-//    number_buckets_ = ceil(static_cast<int>(count) / kFiveDouble);
-//    buckets_ = new T*[number_buckets_];
-//    front_ = std::pair(0, 0);
-//    for (int i = 0; i < static_cast<int>(number_buckets_); ++i) {
-//        if (i == static_cast<int>(number_buckets_) - 1) {
+//template<class T>
+//Deque<T>::Deque(size_t count, const T &value)
+//        :size_(count),
+//         number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+//         front_{0, 0}
+//{
+//    buckets_ = new T *[number_buckets_];
+//    for (size_t i = 0; i < number_buckets_; ++i) {
+//        if (i == number_buckets_ - 1) {
 //            buckets_[i] = new T[kFive];
 //            if (count % kFive == 0) {
 //                for (int j = 0; j < kFive; ++j) {
 //                    buckets_[i][j] = value;
 //                }
-//                rear_ = std::pair(ceil(static_cast<int>(count) / kFiveDouble) - 1,
-//                                  kFive - 1);
+//                rear_ = std::array<long, 2>{static_cast<long>(ceil(count / 5.0)) - 1, kFive - 1};
 //            } else {
 //                for (size_t j = 0; j < count % kFive; ++j) {
 //                    buckets_[i][j] = value;
 //                }
-//                rear_ =
-//                        std::pair(static_cast<int>(number_buckets_) - 1, count % kFive - 1);
+//                rear_ = std::array<long, 2>{number_buckets_ - 1, static_cast<long>(count % kFive - 1)};
 //            }
 //        } else {
 //            buckets_[i] = new T[kFive];
@@ -100,25 +105,51 @@ Deque<T>::Deque(const Deque &other)
 //}
 
 template<class T>
+Deque<T>::Deque(const Deque &other)
+        : size_{other.size_},
+          number_buckets_{other.number_buckets_},
+          front_{other.front_},
+          rear_{other.rear_} {
+    buckets_ = new T *[number_buckets_];
+    for (int i = 0; i < number_buckets_; ++i) {
+        buckets_[i] = new T[kFive]{0};
+        for (int j = 0; j < kFive; ++j) {
+            buckets_[i][j] = other.buckets_[i][j];
+        }
+    }
+}
+
+template<class T>
+Deque<T> &Deque<T>::operator=(const Deque<T> &other) {
+    if (this == &other) {
+        return *this;
+    }
+    for (int i = 0; i < number_buckets_; ++i) {
+        delete[] buckets_[i];
+    }
+    delete[] buckets_;
+    size_ = other.size_;
+    number_buckets_ = other.number_buckets_;
+    front_ = other.front_;
+    rear_ = other.rear_;
+    buckets_ = new T *[number_buckets_];
+    for (int i = 0; i < number_buckets_; ++i) {
+        buckets_[i] = new T[kFive]{0};
+        for (int j = 0; j < kFive; ++j) {
+            buckets_[i][j] = other.buckets_[i][j];
+        }
+    }
+    return *this;
+}
+
+template<class T>
 Deque<T>::~Deque() {
+    for (int i = 0; i < number_buckets_; ++i) {
+        delete[] buckets_[i];
+    }
     delete[] buckets_;
 }
 
-//template <class T>
-//Deque<T>& Deque<T>::operator=(const Deque<T>& other) {
-//    if (this == &other) {
-//        return *this;
-//    }
-//    ~Deque<T>();
-//    size_ = other.size_;
-//    front_ = other.front_;
-//    rear_ = other.rear_;
-//    number_buckets_ = other.number_buckets_;
-//    buckets_ = other.buckets_;
-//    return *this;
-//}
-//
-//
 
 template<class T>
 size_t Deque<T>::size() const {
@@ -136,7 +167,8 @@ T &Deque<T>::operator[](size_t index) {
 }
 
 template<class T>
-T &Deque<T>::at(size_t index) {
+T &Deque<T>::at(size_t
+                index) {
     if (index >= size_) {
         throw std::out_of_range("Index out of range");
     }

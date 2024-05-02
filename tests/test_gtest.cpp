@@ -173,8 +173,8 @@ TEST(DequeConstructors, WithSize) {
     int value = 14;
 
     {
-//        Deque<int> simple(size);
-//        EXPECT_EQ(simple.size(), size);
+        Deque<int> simple(size);
+        EXPECT_EQ(simple.size(), size);
 //        EXPECT_TRUE(std::all_of(simple.begin(),
 //                                simple.end(),
 //                                [](int item) { return item == 0; }));
