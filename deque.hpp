@@ -2,8 +2,13 @@
 
 #include <cmath>
 #include <iostream>
+#include <concepts>
 
 const unsigned int kFive = 5;
+
+//template <typename T>
+//concept DC = std::is_default_constructible_v<T>;
+
 
 template<class T>
 class Deque {
@@ -60,15 +65,47 @@ template<class T>
 Deque<T>::Deque()
         : size_{0}, number_buckets_{0}, front_{-1, 0}, rear_{-1, 0}, buckets_{nullptr} {}
 
+
 template<class T>
 Deque<T>::Deque(size_t count)
         : size_{count},
           number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
           front_{0, 0},
-          rear_{0, 0}{
+          rear_{0, 0} {
+//    static_assert(std::is_default_constructible_v<T> == true);
     buckets_ = new T *[number_buckets_];
     for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive]{0};
+        buckets_[i] = new T[kFive]{};
+    }
+    rear_[0] = number_buckets_ - 1;
+    rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
+}
+
+template<typename T>
+Deque<T>::Deque(size_t count, const T &value)
+        : size_{count},
+          number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+          front_{0, 0},
+          rear_{0, 0} {
+    buckets_ = new T *[number_buckets_];
+    for (int i = 0; i < number_buckets_; ++i) {
+        buckets_[i] = new T[kFive];
+    }
+    if (count % kFive == 0) {
+        for (int i = 0; i < number_buckets_; ++i) {
+            for (int j = 0; j < kFive; ++j) {
+                buckets_[i][j] = value;
+            }
+        }
+    } else {
+        for (int i = 0; i < number_buckets_ - 1; ++i) {
+            for (int j = 0; j < kFive; ++j) {
+                buckets_[i][j] = value;
+            }
+        }
+        for (int j = 0; j < count % kFive; ++j) {
+            buckets_[number_buckets_ - 1][j] = value;
+        }
     }
     rear_[0] = number_buckets_ - 1;
     rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
@@ -112,7 +149,7 @@ Deque<T>::Deque(const Deque &other)
           rear_{other.rear_} {
     buckets_ = new T *[number_buckets_];
     for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive]{0};
+        buckets_[i] = new T[kFive];
         for (int j = 0; j < kFive; ++j) {
             buckets_[i][j] = other.buckets_[i][j];
         }
@@ -134,7 +171,7 @@ Deque<T> &Deque<T>::operator=(const Deque<T> &other) {
     rear_ = other.rear_;
     buckets_ = new T *[number_buckets_];
     for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive]{0};
+        buckets_[i] = new T[kFive];
         for (int j = 0; j < kFive; ++j) {
             buckets_[i][j] = other.buckets_[i][j];
         }

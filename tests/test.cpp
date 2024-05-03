@@ -61,11 +61,62 @@ TEST_CASE("Assign operator", "[Deque][Ctor]") {
         Deque<int> dq2{6};
         CHECK(dq1.size() == 3);
         CHECK(dq2.size() == 6);
+        CHECK(dq1.get_buckets_number() == 1);
+        CHECK(dq2.get_buckets_number() == 2);
         dq1 = dq2;
         CHECK(dq1.size() == 6);
         CHECK(dq2.size() == 6);
-        CHECK(dq1[0] == dq2[0]);
-        CHECK(dq1[5] == dq2[5]);
+        CHECK(dq1.get_buckets_number() == 2);
+        CHECK(dq2.get_buckets_number() == 2);
+    }
+    {
+        Deque<int> dq1{3};
+        Deque<int> dq2{5};
+        CHECK(dq1.size() == 3);
+        CHECK(dq2.size() == 5);
+        CHECK(dq1.get_buckets_number() == 1);
+        CHECK(dq2.get_buckets_number() == 1);
+        dq1 = dq2;
+        CHECK(dq1.size() == 5);
+        CHECK(dq2.size() == 5);
+        CHECK(dq1.get_buckets_number() == 1);
+        CHECK(dq2.get_buckets_number() == 1);
+    }
+    SECTION("Assign after ctor with 2 args"){
+        {
+            Deque<int> dq1{3, 99};
+            Deque<int> dq2{6, 77};
+            CHECK(dq1.size() == 3);
+            CHECK(dq2.size() == 6);
+            CHECK(dq1.get_buckets_number() == 1);
+            CHECK(dq2.get_buckets_number() == 2);
+            dq1 = dq2;
+            CHECK(dq1.size() == 6);
+            CHECK(dq2.size() == 6);
+            CHECK(dq1.get_buckets_number() == 2);
+            CHECK(dq2.get_buckets_number() == 2);
+            CHECK(dq1[0] == dq2[0]);
+            CHECK(dq1[5] == dq2[5]);
+            CHECK(dq1[0] == 77);
+            CHECK(dq1[5] == 77);
+        }
+        {
+            Deque<int> dq1{3, 99};
+            Deque<int> dq2{5, 77};
+            CHECK(dq1.size() == 3);
+            CHECK(dq2.size() == 5);
+            CHECK(dq1.get_buckets_number() == 1);
+            CHECK(dq2.get_buckets_number() == 1);
+            dq1 = dq2;
+            CHECK(dq1.size() == 5);
+            CHECK(dq2.size() == 5);
+            CHECK(dq1.get_buckets_number() == 1);
+            CHECK(dq2.get_buckets_number() == 1);
+            CHECK(dq1[0] == dq2[0]);
+            CHECK(dq1[4] == dq2[4]);
+            CHECK(dq1[0] == 77);
+            CHECK(dq1[4] == 77);
+        }
     }
 }
 
@@ -75,15 +126,48 @@ TEST_CASE("Ctor copy", "[Deque][Ctor]") {
         Deque<int> dq2{dq1};
         CHECK(dq1.size() == 3);
         CHECK(dq2.size() == 3);
-        CHECK(dq1[0] == dq2[0]);
-        CHECK(dq1[2] == dq2[2]);
     }
     {
         Deque<int> dq1{6};
         Deque<int> dq2{dq1};
         CHECK(dq1.size() == 6);
         CHECK(dq2.size() == 6);
-        CHECK(dq1[0] == dq2[0]);
-        CHECK(dq1[5] == dq2[5]);
+    }
+}
+
+TEST_CASE("Ctor with 2 arg", "[Deque][Ctor]") {
+    {
+        Deque<int> dq{1, 99};
+        CHECK(dq.size() == 1);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 0);
+        CHECK(dq[0] == 99);
+    }
+    {
+        Deque<int> dq{5, 99};
+        CHECK(dq.size() == 5);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+        CHECK(dq[0] == 99);
+        CHECK(dq[4] == 99);
+    }
+    {
+        Deque<int> dq{7, 99};
+        CHECK(dq.size() == 7);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 1);
+        CHECK(dq[0] == 99);
+        CHECK(dq[4] == 99);
+        CHECK(dq[5] == 99);
+        CHECK(dq[6] == 99);
     }
 }

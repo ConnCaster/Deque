@@ -167,7 +167,7 @@ TEST(DequeConstructors, Default) {
 //    std::ignore = copy;
 //    EXPECT_EQ(copy.size(), 0);
 //}
-//
+
 TEST(DequeConstructors, WithSize) {
     size_t size = 17;
     int value = 14;
@@ -202,42 +202,42 @@ TEST(DequeConstructors, WithSize) {
 //    EXPECT_TRUE(CompareStacks(first, second));
 //}
 //
-//TEST(DequeConstructors, StaticAsserts) {
-//    using T1 = int;
-//    using T2 = NotDefaultConstructible;
-//
-//    EXPECT_TRUE(std::is_default_constructible_v<Deque<T1>>);
-//    EXPECT_TRUE(std::is_default_constructible_v<Deque<T2>>);
-//
-//    EXPECT_TRUE(std::is_copy_constructible_v<Deque<T1>>);
-//    EXPECT_TRUE(std::is_copy_constructible_v<Deque<T2>>);
-//
-//    {
-//        auto test = std::is_constructible_v<Deque<T1>, size_t>;
-//        EXPECT_TRUE(test);
-//    }
-//
-//    {
-//        auto test = std::is_constructible_v<Deque<T1>, size_t, const T1&>;
-//        EXPECT_TRUE(test);
-//    }
-//
-//    {
-//        auto test = std::is_constructible_v<Deque<T2>, size_t, const T2&>;
-//        EXPECT_TRUE(test);
-//    }
-//
-//    EXPECT_TRUE(std::is_copy_assignable_v<Deque<T1>>);
-//    EXPECT_TRUE(std::is_copy_assignable_v<Deque<T2>>);
-//}
-//
+TEST(DequeConstructors, StaticAsserts) {
+    using T1 = int;
+    using T2 = NotDefaultConstructible;
+
+    EXPECT_TRUE(std::is_default_constructible_v<Deque<T1>>);
+    EXPECT_TRUE(std::is_default_constructible_v<Deque<T2>>);
+
+    EXPECT_TRUE(std::is_copy_constructible_v<Deque<T1>>);
+    EXPECT_TRUE(std::is_copy_constructible_v<Deque<T2>>);
+
+    {
+        auto test = std::is_constructible_v<Deque<T1>, size_t>;
+        EXPECT_TRUE(test);
+    }
+
+    {
+        auto test = std::is_constructible_v<Deque<T1>, size_t, const T1&>;
+        EXPECT_TRUE(test);
+    }
+
+    {
+        auto test = std::is_constructible_v<Deque<T2>, size_t, const T2&>;
+        EXPECT_TRUE(test);
+    }
+
+    EXPECT_TRUE(std::is_copy_assignable_v<Deque<T1>>);
+    EXPECT_TRUE(std::is_copy_assignable_v<Deque<T2>>);
+}
+
 //TEST(DequeAccess, SquareBrackets) {
 //    Deque<size_t> defaulted(1300, 43);
 //
 //    EXPECT_EQ(defaulted[0], defaulted[1280]);
 //    EXPECT_EQ(defaulted[0], 43);
 //}
-//
+
 //TEST(DequeAccess, OperatorAt) {
 //    Deque<size_t> defaulted(1300, 43);
 //
