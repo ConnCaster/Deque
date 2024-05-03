@@ -163,9 +163,9 @@ TEST(DequeConstructors, Default) {
 
 TEST(DequeConstructors, CopyEmpty) {
     Deque<NotDefaultConstructible> without_default;
-//    Deque<NotDefaultConstructible> copy = without_default;
-//    std::ignore = copy;
-//    EXPECT_EQ(copy.size(), 0);
+    Deque<NotDefaultConstructible> copy = without_default;
+    std::ignore = copy;
+    EXPECT_EQ(copy.size(), 0);
 }
 
 TEST(DequeConstructors, WithSize) {
@@ -183,7 +183,6 @@ TEST(DequeConstructors, WithSize) {
     {
         Deque<NotDefaultConstructible> less_simple(size, value);
         EXPECT_EQ(less_simple.size(), size);
-//        std::array<NotDefaultConstructible, 2> arr{NotDefaultConstructible{1}, NotDefaultConstructible{1}};
 //        EXPECT_TRUE(std::all_of(less_simple.begin(),
 //                                less_simple.end(),
 //                                [value = value](const auto& item) {

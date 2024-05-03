@@ -20,4 +20,3 @@ target_link_libraries(
 )
 
 target_include_directories(test_gtest PUBLIC "/home/user/dir/programming/C++/Alexey_CPP/deps/gtest/include" ../)
-#gtest_discover_tests(test_gtest)

@@ -1,6 +1,12 @@
 #include <catch2/catch_all.hpp>
 #include "deque.hpp"
 
+//TEST_CASE("Ctor default original", "[Deque][Ctor]") {
+//    std::deque<int> dq{};
+//    CHECK(dq.size() == 0);
+//    CHECK(dq.empty());
+//}
+
 TEST_CASE("Ctor default", "[Deque][Ctor]") {
     Deque<int> dq{};
     CHECK(dq.size() == 0);
@@ -126,12 +132,16 @@ TEST_CASE("Ctor copy", "[Deque][Ctor]") {
         Deque<int> dq2{dq1};
         CHECK(dq1.size() == 3);
         CHECK(dq2.size() == 3);
+        CHECK(dq1.get_buckets_number()== dq2.get_buckets_number());
+        CHECK(dq1.get_rear() == dq2.get_rear());
     }
     {
         Deque<int> dq1{6};
         Deque<int> dq2{dq1};
         CHECK(dq1.size() == 6);
         CHECK(dq2.size() == 6);
+        CHECK(dq1.get_buckets_number()== dq2.get_buckets_number());
+        CHECK(dq1.get_rear() == dq2.get_rear());
     }
 }
 

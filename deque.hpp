@@ -2,9 +2,10 @@
 
 #include <cmath>
 #include <iostream>
-#include <concepts>
+#include <array>
 
 const unsigned int kFive = 5;
+const double kFiveDouble = 5.0;
 
 //template <typename T>
 //concept DC = std::is_default_constructible_v<T>;
@@ -69,10 +70,9 @@ Deque<T>::Deque()
 template<class T>
 Deque<T>::Deque(size_t count)
         : size_{count},
-          number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+          number_buckets_{static_cast<size_t>(ceil(count / kFiveDouble))},
           front_{0, 0},
           rear_{0, 0} {
-//    static_assert(std::is_default_constructible_v<T> == true);
     buckets_ = new T *[number_buckets_];
     for (int i = 0; i < number_buckets_; ++i) {
         buckets_[i] = new T[kFive]{};
@@ -84,7 +84,7 @@ Deque<T>::Deque(size_t count)
 template<typename T>
 Deque<T>::Deque(size_t count, const T &value)
         : size_{count},
-          number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+          number_buckets_{static_cast<size_t>(ceil(count / kFiveDouble))},
           front_{0, 0},
           rear_{0, 0} {
     buckets_ = new T *[number_buckets_];
@@ -182,13 +182,22 @@ Deque<T>::Deque(const Deque &other)
           number_buckets_{other.number_buckets_},
           front_{other.front_},
           rear_{other.rear_} {
-    buckets_ = new T *[number_buckets_];
-    for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive];
-        for (int j = 0; j < kFive; ++j) {
-            buckets_[i][j] = other.buckets_[i][j];
+    if (size_ != 0) {
+        buckets_ = new T *[number_buckets_];
+        for (int i = 0; i < number_buckets_-1; ++i) {
+            buckets_[i] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+            for (int j = 0; j < kFive; ++j) {
+                buckets_[i][j] = other.buckets_[i][j];
+            }
         }
+        buckets_[number_buckets_-1] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+        for (int j = 0; j < other.rear_[1]; ++j) {
+            buckets_[number_buckets_-1][j] = other.buckets_[number_buckets_-1][j];
+        }
+    } else {
+        buckets_ = nullptr;
     }
+
 }
 
 template<class T>
