@@ -46,17 +46,17 @@ struct ThrowStruct {
     bool throw_in_copy;
 };
 
-//template <class Stack1, class Stack2>
-//bool CompareStacks(const Stack1& s1, const Stack2& s2) {
-//    for (size_t i = 0; i < s1.size(); ++i) {
-//        if (s1[i] != s2[i]) {
-//            return false;
-//        }
-//    }
-//
-//    return true;
-//}
-//
+template <class Stack1, class Stack2>
+bool CompareStacks(const Stack1& s1, const Stack2& s2) {
+    for (size_t i = 0; i < s1.size(); ++i) {
+        if (s1[i] != s2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 //template <typename Iterator, typename T>
 //void IteratorTest() {
 //    using traits = std::iterator_traits<Iterator>;
@@ -161,12 +161,12 @@ TEST(DequeConstructors, Default) {
     EXPECT_EQ(without_default.size(), 0);
 }
 
-//TEST(DequeConstructors, CopyEmpty) {
-//    Deque<NotDefaultConstructible> without_default;
+TEST(DequeConstructors, CopyEmpty) {
+    Deque<NotDefaultConstructible> without_default;
 //    Deque<NotDefaultConstructible> copy = without_default;
 //    std::ignore = copy;
 //    EXPECT_EQ(copy.size(), 0);
-//}
+}
 
 TEST(DequeConstructors, WithSize) {
     size_t size = 17;
@@ -181,8 +181,9 @@ TEST(DequeConstructors, WithSize) {
     }
 
     {
-//        Deque<NotDefaultConstructible> less_simple(size, value);
-//        EXPECT_EQ(less_simple.size(), size);
+        Deque<NotDefaultConstructible> less_simple(size, value);
+        EXPECT_EQ(less_simple.size(), size);
+//        std::array<NotDefaultConstructible, 2> arr{NotDefaultConstructible{1}, NotDefaultConstructible{1}};
 //        EXPECT_TRUE(std::all_of(less_simple.begin(),
 //                                less_simple.end(),
 //                                [value = value](const auto& item) {
@@ -192,16 +193,16 @@ TEST(DequeConstructors, WithSize) {
 
 }
 
-//TEST(DequeOperators, Assignment) {
-//    Deque<int> first(10, 10);
-//    Deque<int> second(9, 9);
-//    first = second;
-//
-//    EXPECT_EQ(first.size(), 9);
-//    EXPECT_EQ(first.size(), second.size());
+TEST(DequeOperators, Assignment) {
+    Deque<int> first(10, 10);
+    Deque<int> second(9, 9);
+    first = second;
+
+    EXPECT_EQ(first.size(), 9);
+    EXPECT_EQ(first.size(), second.size());
 //    EXPECT_TRUE(CompareStacks(first, second));
-//}
-//
+}
+
 TEST(DequeConstructors, StaticAsserts) {
     using T1 = int;
     using T2 = NotDefaultConstructible;
@@ -231,22 +232,22 @@ TEST(DequeConstructors, StaticAsserts) {
     EXPECT_TRUE(std::is_copy_assignable_v<Deque<T2>>);
 }
 
-//TEST(DequeAccess, SquareBrackets) {
-//    Deque<size_t> defaulted(1300, 43);
-//
-//    EXPECT_EQ(defaulted[0], defaulted[1280]);
-//    EXPECT_EQ(defaulted[0], 43);
-//}
+TEST(DequeAccess, SquareBrackets) {
+    Deque<size_t> defaulted(1300, 43);
 
-//TEST(DequeAccess, OperatorAt) {
-//    Deque<size_t> defaulted(1300, 43);
-//
-//    EXPECT_EQ(defaulted.at(0), defaulted.at(1280));
-//    EXPECT_EQ(defaulted.at(0), 43);
-//
-//    EXPECT_THROW(defaulted.at(size_t(-1)), std::out_of_range);
-//    EXPECT_THROW(defaulted.at(1300), std::out_of_range);
-//}
+    EXPECT_EQ(defaulted[0], defaulted[1280]);
+    EXPECT_EQ(defaulted[0], 43);
+}
+
+TEST(DequeAccess, OperatorAt) {
+    Deque<size_t> defaulted(1300, 43);
+
+    EXPECT_EQ(defaulted.at(0), defaulted.at(1280));
+    EXPECT_EQ(defaulted.at(0), 43);
+
+    EXPECT_THROW(defaulted.at(size_t(-1)), std::out_of_range);
+    EXPECT_THROW(defaulted.at(1300), std::out_of_range);
+}
 
 TEST(DequeAccess, StaticAsserts) {
     Deque<size_t> defaulted;
@@ -440,26 +441,26 @@ TEST(DequeAccess, StaticAsserts) {
 //    }
 //    EXPECT_EQ(d.size(), 69);
 //}
-//
-//TEST(Deque, Throw) {
-//    {
-//        EXPECT_THROW(Deque<ThrowStruct> d(10, ThrowStruct(0, false, true)), int);
-//    }
-//
-//    {
-//        Deque<ThrowStruct> d(10, ThrowStruct(10, true, false));
-//
-//        EXPECT_THROW(d[0] = ThrowStruct(1, false, false), int);
-//        EXPECT_EQ(d.size(), 10);
-//        EXPECT_EQ(d[0].value, 10);
-//    }
-//
-//    {
-//        Deque<ThrowStruct> d(1, ThrowStruct(10, false, false));
+
+TEST(Deque, Throw) {
+    {
+        EXPECT_THROW(Deque<ThrowStruct> d(10, ThrowStruct(0, false, true)), int);
+    }
+
+    {
+        Deque<ThrowStruct> d(10, ThrowStruct(10, true, false));
+
+        EXPECT_THROW(d[0] = ThrowStruct(1, false, false), int);
+        EXPECT_EQ(d.size(), 10);
+        EXPECT_EQ(d[0].value, 10);
+    }
+
+    {
+        Deque<ThrowStruct> d(1, ThrowStruct(10, false, false));
 //        EXPECT_THROW(d.push_back(ThrowStruct(1, false, true)), int);
 //        EXPECT_EQ(d.size(), 1);
-//    }
-//}
+    }
+}
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
