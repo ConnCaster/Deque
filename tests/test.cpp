@@ -181,3 +181,64 @@ TEST_CASE("Ctor with 2 arg", "[Deque][Ctor]") {
         CHECK(dq[6] == 99);
     }
 }
+
+TEST_CASE("PushBack", "[Deque][Push]") {
+    {
+        Deque<int> dq;
+        CHECK(dq.size() == 0);
+        CHECK(dq.get_buckets_number() == 0);
+        CHECK(dq.get_front()[0] == -1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == -1);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.push_back(99);
+        CHECK(dq[0] == 99);
+        CHECK(dq.size() == 1);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+    {
+        Deque<int> dq{1};
+        CHECK(dq.size() == 1);
+        CHECK(dq[0] == 0);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.push_back(99);
+        CHECK(dq[0] == 0);
+        CHECK(dq[1] == 99);
+        CHECK(dq.size() == 2);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 1);
+    }
+    {
+        Deque<int> dq{5};
+        CHECK(dq.size() == 5);
+        CHECK(dq[4] == 0);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+
+        dq.push_back(99);
+        CHECK(dq[4] == 0);
+        CHECK(dq[5] == 99);
+        CHECK(dq.size() == 6);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+}

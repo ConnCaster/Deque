@@ -87,28 +87,21 @@ Deque<T>::Deque(size_t count, const T &value)
           number_buckets_{static_cast<size_t>(ceil(count / kFiveDouble))},
           front_{0, 0},
           rear_{0, 0} {
-    buckets_ = new T *[number_buckets_];
-    for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
-    }
-/*    if (count % kFive == 0) {
-        for (int i = 0; i < number_buckets_; ++i) {
-            for (int j = 0; j < kFive; ++j) {
-                buckets_[i][j] = value;
-            }
-        }
-    } else {
-        for (int i = 0; i < number_buckets_ - 1; ++i) {
-            for (int j = 0; j < kFive; ++j) {
-                buckets_[i][j] = value;
-            }
-        }
-        for (int j = 0; j < count % kFive; ++j) {
-            buckets_[number_buckets_ - 1][j] = value;
-        }
-    }*/
-    rear_[0] = number_buckets_ - 1;
-    rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
+      try{
+          buckets_ = new T *[number_buckets_];
+          for (int i = 0; i < number_buckets_; ++i) {
+              buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
+          }
+          rear_[0] = number_buckets_ - 1;
+          rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
+      }catch (const std::exception&) {
+          for (int i = 0; i < number_buckets_; ++i) {
+              delete[] buckets_[i];
+          }
+          delete[]buckets_;
+          std::cout << "Something happened...\n";
+      }
+
 }
 
 /*template<typename T>
@@ -145,36 +138,6 @@ Deque<T>::Deque(size_t count, const T &value)
     rear_[0] = number_buckets_ - 1;
     rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
 }*/
-
-//template<class T>
-//Deque<T>::Deque(size_t count, const T &value)
-//        :size_(count),
-//         number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
-//         front_{0, 0}
-//{
-//    buckets_ = new T *[number_buckets_];
-//    for (size_t i = 0; i < number_buckets_; ++i) {
-//        if (i == number_buckets_ - 1) {
-//            buckets_[i] = new T[kFive];
-//            if (count % kFive == 0) {
-//                for (int j = 0; j < kFive; ++j) {
-//                    buckets_[i][j] = value;
-//                }
-//                rear_ = std::array<long, 2>{static_cast<long>(ceil(count / 5.0)) - 1, kFive - 1};
-//            } else {
-//                for (size_t j = 0; j < count % kFive; ++j) {
-//                    buckets_[i][j] = value;
-//                }
-//                rear_ = std::array<long, 2>{number_buckets_ - 1, static_cast<long>(count % kFive - 1)};
-//            }
-//        } else {
-//            buckets_[i] = new T[kFive];
-//            for (int j = 0; j < kFive; ++j) {
-//                buckets_[i][j] = value;
-//            }
-//        }
-//    }
-//}
 
 template<class T>
 Deque<T>::Deque(const Deque &other)
@@ -256,38 +219,52 @@ T &Deque<T>::at(size_t
     return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
-//template <class T>
-//void Deque<T>::push_back(const T& value) {
-//    if (!buckets_) {
-//        buckets_ = new T*[1];
-//        buckets_[0] = new T[kFive];
-//        buckets_[0][0] = value;
-//        ++size_;
-//        ++number_buckets_;
-//        front_ = {0, 0};
-//        rear_ = {0, 0};
-//    } else {
-//        if (rear_.first == number_buckets_ - 1 && rear_.second == kFive - 1) {
-//            T** new_buckets = new T*[number_buckets_ * 3];
-//            for (int i = number_buckets_; i < number_buckets_ * 2; ++i) {
-//                new_buckets[i] = buckets_[i - number_buckets_];
-//            }
-//            delete[] buckets_;
-//            buckets_ = new_buckets;
-//            buckets_[number_buckets_ * 2][0] = value;
-//            rear_.first = number_buckets_ * 2;
-//            rear_.second = 0;
-//            front_.first = number_buckets_;
-//            number_buckets_ *= 3;
-//            ++size_;
-//        } else {
-//            buckets_[rear_.first][rear_.second + 1] = value;
-//            ++rear_.second;
-//            ++size_;
-//        }
+template <class T>
+void Deque<T>::push_back(const T& value) {
+        if (!buckets_) {
+            buckets_ = new T*[1];
+            buckets_[0] = new T[kFive];
+            buckets_[0][0] = value;
+            ++size_;
+            ++number_buckets_;
+            front_ = {0, 0};
+            rear_ = {0, 0};
+        } else {
+            if (rear_[0] == number_buckets_ - 1 && rear_[1] == kFive - 1) {
+                T** new_buckets = new T*[number_buckets_ + 1];
+                for (int i = 0; i < number_buckets_; ++i) {
+                    new_buckets[i] = new T[kFive];
+                    for (int j = 0; j < kFive; ++j) {
+                        new_buckets[i][j] = buckets_[i][j];
+                    }
+                }
+                for (int i = 0; i < number_buckets_; ++i) {
+                    delete[] buckets_[i];
+                }
+                delete[] buckets_;
+                buckets_ = new_buckets;
+                buckets_[number_buckets_] = new T[kFive];
+                buckets_[number_buckets_][0] = value;
+                ++number_buckets_;
+                rear_[0] = number_buckets_-1;
+                rear_[1] = 0;
+                ++size_;
+            } else {
+                buckets_[rear_[0]][rear_[1] + 1] = value;
+                ++rear_[1];
+                ++size_;
+            }
+        }
+//    }catch (const std::exception&) {
+//    for (int i = 0; i < number_buckets_; ++i) {
+//        delete[] buckets_[i];
 //    }
+//    delete[]buckets_;
+//    std::cout << "Something happened...\n";
 //}
-//
+
+}
+
 //template <class T>
 //void Deque<T>::pop_back() {
 //    if (rear_.second == 0) {

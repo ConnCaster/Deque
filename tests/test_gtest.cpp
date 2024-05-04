@@ -431,15 +431,15 @@ TEST(DequeAccess, StaticAsserts) {
 //    EXPECT_EQ(d.size(), 69);
 //}
 //
-//TEST(DequeModification, PushBackOnly) {
-//    Deque<size_t> d(5, 10);
-//    EXPECT_EQ(d.size(), 5);
-//
-//    for (size_t i = 0; i < 64; ++i) {
-//        d.push_back(i);
-//    }
-//    EXPECT_EQ(d.size(), 69);
-//}
+TEST(DequeModification, PushBackOnly) {
+    Deque<size_t> d(5, 10);
+    EXPECT_EQ(d.size(), 5);
+
+    for (size_t i = 0; i < 64; ++i) {
+        d.push_back(i);
+    }
+    EXPECT_EQ(d.size(), 69);
+}
 
 TEST(Deque, Throw) {
     {
@@ -457,7 +457,7 @@ TEST(Deque, Throw) {
     {
         Deque<ThrowStruct> d(1, ThrowStruct(10, false, false));
 //        EXPECT_THROW(d.push_back(ThrowStruct(1, false, true)), int);
-//        EXPECT_EQ(d.size(), 1);
+        EXPECT_EQ(d.size(), 1);
     }
 }
 
