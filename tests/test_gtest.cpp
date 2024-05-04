@@ -262,17 +262,17 @@ TEST(DequeAccess, StaticAsserts) {
         EXPECT_TRUE(test);
     }
 
-//    {
-//        auto test = std::is_same_v<decltype(constant[0]), const size_t&>;
-//        EXPECT_TRUE(test);
-//    }
-//
-//    {
-//        auto test = std::is_same_v<decltype(constant.at(0)), const size_t&>;
-//        EXPECT_TRUE(test);
-//    }
-//
-//    EXPECT_FALSE(noexcept(defaulted.at(0)));
+    {
+        auto test = std::is_same_v<decltype(constant[0]), const size_t&>;
+        EXPECT_TRUE(test);
+    }
+
+    {
+        auto test = std::is_same_v<decltype(constant.at(0)), const size_t&>;
+        EXPECT_TRUE(test);
+    }
+
+    EXPECT_FALSE(noexcept(defaulted.at(0)));
 }
 
 //TEST(DequeItetators, StaticAsserts) {

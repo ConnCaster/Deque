@@ -32,7 +32,11 @@ public:
 
     T &operator[](size_t index);
 
+    const T &operator[] (size_t index) const;
+
     T &at(size_t index);
+
+    const T &at(size_t index) const;
 
     void push_back(const T &value);
 
@@ -61,6 +65,7 @@ private:
     std::array<long, 2> rear_;
     T **buckets_;
 };
+
 
 template<class T>
 Deque<T>::Deque()
@@ -211,6 +216,12 @@ T &Deque<T>::operator[](size_t index) {
 }
 
 template<class T>
+const T &Deque<T>::operator[](size_t index) const {
+    return buckets_[front_[0] + index / kFive][index % kFive];
+}
+
+
+template<class T>
 T &Deque<T>::at(size_t
                 index) {
     if (index >= size_) {
@@ -219,12 +230,25 @@ T &Deque<T>::at(size_t
     return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
+template<class T>
+const T &Deque<T>::at(size_t index) const {
+    if (index >= size_) {
+        throw std::out_of_range("Index out of range");
+    }
+    return buckets_[front_[0] + index / kFive][index % kFive];
+}
+
+
 template <class T>
 void Deque<T>::push_back(const T& value) {
         if (!buckets_) {
             buckets_ = new T*[1];
-            buckets_[0] = new T[kFive];
-            buckets_[0][0] = value;
+            buckets_[0] = new T[kFive]{value, value, value, value, value};
+            try {
+                buckets_[0][0] = value;
+            } catch (std::exception& ex) {
+                throw std::exception(ex);
+            }
             ++size_;
             ++number_buckets_;
             front_ = {0, 0};
@@ -233,7 +257,7 @@ void Deque<T>::push_back(const T& value) {
             if (rear_[0] == number_buckets_ - 1 && rear_[1] == kFive - 1) {
                 T** new_buckets = new T*[number_buckets_ + 1];
                 for (int i = 0; i < number_buckets_; ++i) {
-                    new_buckets[i] = new T[kFive];
+                    new_buckets[i] = new T[kFive]{value, value, value, value, value};
                     for (int j = 0; j < kFive; ++j) {
                         new_buckets[i][j] = buckets_[i][j];
                     }
@@ -243,14 +267,22 @@ void Deque<T>::push_back(const T& value) {
                 }
                 delete[] buckets_;
                 buckets_ = new_buckets;
-                buckets_[number_buckets_] = new T[kFive];
-                buckets_[number_buckets_][0] = value;
+                buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
+                try {
+                    buckets_[number_buckets_][0] = value;
+                } catch (std::exception& ex) {
+                    throw std::exception(ex);
+                }
                 ++number_buckets_;
                 rear_[0] = number_buckets_-1;
                 rear_[1] = 0;
                 ++size_;
             } else {
-                buckets_[rear_[0]][rear_[1] + 1] = value;
+                try {
+                    buckets_[rear_[0]][rear_[1] + 1] = value;
+                } catch (std::exception& ex) {
+                    throw std::exception(ex);
+                }
                 ++rear_[1];
                 ++size_;
             }
