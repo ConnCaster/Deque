@@ -78,9 +78,22 @@ Deque<T>::Deque(size_t count)
           number_buckets_{static_cast<size_t>(ceil(count / kFiveDouble))},
           front_{0, 0},
           rear_{0, 0} {
-    buckets_ = new T *[number_buckets_];
+              try {
+                  buckets_ = new T *[number_buckets_];
+              } catch (...) {
+                  throw;
+              }
+
     for (int i = 0; i < number_buckets_; ++i) {
-        buckets_[i] = new T[kFive]{};
+        try{
+            buckets_[i] = new T[kFive]{};
+        } catch (...) {
+            for (int j = 0; j < i-1; ++j) {
+                delete[]buckets_[j];
+            }
+            delete[] buckets_;
+            throw;
+        }
     }
     rear_[0] = number_buckets_ - 1;
     rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
@@ -94,18 +107,23 @@ Deque<T>::Deque(size_t count, const T &value)
           rear_{0, 0} {
       try{
           buckets_ = new T *[number_buckets_];
-          for (int i = 0; i < number_buckets_; ++i) {
-              buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
-          }
-          rear_[0] = number_buckets_ - 1;
-          rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
-      }catch (const std::exception&) {
-          for (int i = 0; i < number_buckets_; ++i) {
-              delete[] buckets_[i];
-          }
-          delete[]buckets_;
-          std::cout << "Something happened...\n";
+      }catch (...) {
+          throw;
       }
+      for (int i = 0; i < number_buckets_; ++i) {
+          try{
+          buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
+          } catch (...) {
+              for (int j = 0; j < i-1; ++j) {
+                  delete[]buckets_[j];
+              }
+              delete[] buckets_;
+              throw;
+          }
+      }
+      rear_[0] = number_buckets_ - 1;
+      rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
+
 
 }
 
@@ -151,14 +169,34 @@ Deque<T>::Deque(const Deque &other)
           front_{other.front_},
           rear_{other.rear_} {
     if (size_ != 0) {
-        buckets_ = new T *[number_buckets_];
+        try{
+            buckets_ = new T *[number_buckets_];
+        }catch (...) {
+            throw;
+        }
         for (int i = 0; i < number_buckets_-1; ++i) {
-            buckets_[i] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+            try{
+                buckets_[i] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+            } catch (...) {
+                for (int j = 0; j < i-1; ++j) {
+                    delete[]buckets_[j];
+                }
+                delete[] buckets_;
+                throw;
+            }
             for (int j = 0; j < kFive; ++j) {
                 buckets_[i][j] = other.buckets_[i][j];
             }
         }
-        buckets_[number_buckets_-1] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+        try{
+            buckets_[number_buckets_-1] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+        } catch (...) {
+            for (int j = 0; j < number_buckets_-1; ++j) {
+                delete[]buckets_[j];
+            }
+            delete[] buckets_;
+            throw;
+        }
         for (int j = 0; j < other.rear_[1]; ++j) {
             buckets_[number_buckets_-1][j] = other.buckets_[number_buckets_-1][j];
         }
@@ -181,9 +219,21 @@ Deque<T> &Deque<T>::operator=(const Deque<T> &other) {
     number_buckets_ = other.number_buckets_;
     front_ = other.front_;
     rear_ = other.rear_;
-    buckets_ = new T *[number_buckets_];
+    try{
+        buckets_ = new T *[number_buckets_];
+    }catch (...) {
+        throw;
+    }
     for (int i = 0; i < number_buckets_; ++i) {
+        try{
         buckets_[i] = new T[kFive];
+        } catch (...) {
+            for (int j = 0; j < i-1; ++j) {
+                delete[]buckets_[j];
+            }
+            delete[] buckets_;
+            throw;
+        }
         for (int j = 0; j < kFive; ++j) {
             buckets_[i][j] = other.buckets_[i][j];
         }
@@ -242,12 +292,21 @@ const T &Deque<T>::at(size_t index) const {
 template <class T>
 void Deque<T>::push_back(const T& value) {
         if (!buckets_) {
-            buckets_ = new T*[1];
-            buckets_[0] = new T[kFive]{value, value, value, value, value};
+            try{
+                buckets_ = new T*[1];
+            } catch (...) {
+                throw;
+            }
+            try {
+                buckets_[0] = new T[kFive]{value, value, value, value, value};
+            } catch (...) {
+                delete[] buckets_;
+                throw;
+            }
             try {
                 buckets_[0][0] = value;
-            } catch (std::exception& ex) {
-                throw std::exception(ex);
+            } catch (...) {
+                throw;
             }
             ++size_;
             ++number_buckets_;
@@ -255,9 +314,22 @@ void Deque<T>::push_back(const T& value) {
             rear_ = {0, 0};
         } else {
             if (rear_[0] == number_buckets_ - 1 && rear_[1] == kFive - 1) {
-                T** new_buckets = new T*[number_buckets_ + 1];
+                T **new_buckets = nullptr;
+                try {
+                    new_buckets = new T *[number_buckets_ + 1];
+                } catch (...) {
+                    throw;
+                }
                 for (int i = 0; i < number_buckets_; ++i) {
-                    new_buckets[i] = new T[kFive]{value, value, value, value, value};
+                    try{
+                        new_buckets[i] = new T[kFive]{value, value, value, value, value};
+                    } catch (...) {
+                        for (int j = 0; j < i - 1; ++j) {
+                            delete[] new_buckets[j];
+                        }
+                        delete[] new_buckets;
+                        throw;
+                    }
                     for (int j = 0; j < kFive; ++j) {
                         new_buckets[i][j] = buckets_[i][j];
                     }
@@ -267,11 +339,23 @@ void Deque<T>::push_back(const T& value) {
                 }
                 delete[] buckets_;
                 buckets_ = new_buckets;
-                buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
+                try {
+                    buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
+                } catch(...) {
+                    for (int j = 0; j < number_buckets_; ++j) {
+                        delete[] buckets_[j];
+                    }
+                    delete[] buckets_;
+                    throw;
+                }
                 try {
                     buckets_[number_buckets_][0] = value;
-                } catch (std::exception& ex) {
-                    throw std::exception(ex);
+                } catch (...) {
+                    for (int j = 0; j < number_buckets_; ++j) {
+                        delete[] buckets_[j];
+                    }
+                    delete[] buckets_;
+                    throw;
                 }
                 ++number_buckets_;
                 rear_[0] = number_buckets_-1;
@@ -280,21 +364,17 @@ void Deque<T>::push_back(const T& value) {
             } else {
                 try {
                     buckets_[rear_[0]][rear_[1] + 1] = value;
-                } catch (std::exception& ex) {
-                    throw std::exception(ex);
+                } catch (...) {
+                    for (int j = 0; j < number_buckets_; ++j) {
+                        delete[] buckets_[j];
+                    }
+                    delete[] buckets_;
+                    throw;
                 }
                 ++rear_[1];
                 ++size_;
             }
         }
-//    }catch (const std::exception&) {
-//    for (int i = 0; i < number_buckets_; ++i) {
-//        delete[] buckets_[i];
-//    }
-//    delete[]buckets_;
-//    std::cout << "Something happened...\n";
-//}
-
 }
 
 //template <class T>

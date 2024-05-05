@@ -448,7 +448,7 @@ TEST(Deque, Throw) {
 
     {
         Deque<ThrowStruct> d(10, ThrowStruct(10, true, false));
-
+//        d[0] = ThrowStruct(1, false, false);
         EXPECT_THROW(d[0] = ThrowStruct(1, false, false), int);
         EXPECT_EQ(d.size(), 10);
         EXPECT_EQ(d[0].value, 10);
