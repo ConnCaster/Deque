@@ -455,7 +455,7 @@ TEST(Deque, Throw) {
 
     {
         Deque<ThrowStruct> d(1, ThrowStruct(10, false, false));
-//        EXPECT_THROW(d.push_back(ThrowStruct(1, false, true)), int);
+        EXPECT_THROW(d.push_back(ThrowStruct(1, false, true)), int);
         EXPECT_EQ(d.size(), 1);
     }
 }
@@ -463,7 +463,6 @@ TEST(Deque, Throw) {
 
 #include <algorithm>
 #include <vector>
-#include <chrono>
 #include <iostream>
 
 void FillVectorWithRandomNumbers(std::vector<size_t>& v,
