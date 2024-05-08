@@ -420,17 +420,17 @@ TEST(DequeAccess, StaticAsserts) {
 //    EXPECT_TRUE(d.size() == copy.size());
 //    EXPECT_TRUE(std::equal(d.begin(), d.end(), copy.begin()));
 //}
-//
-//TEST(DequeModification, PushFrontOnly) {
-//    Deque<size_t> d(5, 10);
-//    EXPECT_EQ(d.size(), 5);
-//
-//    for (size_t i = 0; i < 64; ++i) {
-//        d.push_front(i);
-//    }
-//    EXPECT_EQ(d.size(), 69);
-//}
-//
+
+TEST(DequeModification, PushFrontOnly) {
+    Deque<size_t> d(5, 10);
+    EXPECT_EQ(d.size(), 5);
+
+    for (size_t i = 0; i < 64; ++i) {
+        d.push_front(i);
+    }
+    EXPECT_EQ(d.size(), 69);
+}
+
 TEST(DequeModification, PushBackOnly) {
     Deque<size_t> d(5, 10);
     EXPECT_EQ(d.size(), 5);
