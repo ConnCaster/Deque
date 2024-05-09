@@ -4,7 +4,7 @@
 #include <iostream>
 #include <array>
 
-const unsigned int kFive = 5;
+const unsigned int kFive = 1000;
 const double kFiveDouble = 5.0;
 
 //template <typename T>
@@ -126,6 +126,41 @@ Deque<T>::Deque(size_t count, const T &value)
 
 
 }
+
+/*template<typename T>
+Deque<T>::Deque(size_t count, const T &value)
+        : size_{count},
+          number_buckets_{static_cast<size_t>(ceil(count / 5.0))},
+          front_{0, 0},
+          rear_{0, 0} {
+    if constexpr (!std::is_default_constructible_v<T>) {
+        throw std::exception();
+    } else {
+        buckets_ = new T *[number_buckets_];
+        for (int i = 0; i < number_buckets_; ++i) {
+            buckets_[i] = new T[kFive]{};
+        }
+        if (count % kFive == 0) {
+            for (int i = 0; i < number_buckets_; ++i) {
+                for (int j = 0; j < kFive; ++j) {
+                    buckets_[i][j] = value;
+                }
+            }
+        } else {
+            for (int i = 0; i < number_buckets_ - 1; ++i) {
+                for (int j = 0; j < kFive; ++j) {
+                    buckets_[i][j] = value;
+                }
+            }
+            for (int j = 0; j < count % kFive; ++j) {
+                buckets_[number_buckets_ - 1][j] = value;
+            }
+        }
+    }
+
+    rear_[0] = number_buckets_ - 1;
+    rear_[1] = (count % kFive == 0) ? 4 : count % kFive - 1;
+}*/
 
 template<class T>
 Deque<T>::Deque(const Deque &other)

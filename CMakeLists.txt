@@ -6,3 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(deque main.cpp)
 
 add_subdirectory(tests)
+
+add_executable(stress stress.cpp)
