@@ -112,7 +112,12 @@ Deque<T>::Deque(size_t count, const T &value)
       }
       for (int i = 0; i < number_buckets_; ++i) {
           try{
-              buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
+//              buckets_[i] = new T[kFive]{value,value,value,value,value};  // это дикий костыль!
+              void *rawMemory = operator new[] (kFive * sizeof(T));
+              buckets_[i] = static_cast<T*>(rawMemory);
+              for (int j = 0; j < kFive; ++j) {
+                  new(&buckets_[i][j])T(value);
+              }
           } catch (...) {
               for (int j = 0; j < i-1; ++j) {
                   delete[]buckets_[j];
@@ -141,7 +146,9 @@ Deque<T>::Deque(const Deque &other)
         }
         for (int i = 0; i < number_buckets_-1; ++i) {
             try{
-                buckets_[i] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+//                buckets_[i] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+                void *rawMemory = operator new[] (kFive * sizeof(T));  //
+                buckets_[i] = static_cast<T*>(rawMemory);              //
             } catch (...) {
                 for (int j = 0; j < i-1; ++j) {
                     delete[]buckets_[j];
@@ -162,7 +169,9 @@ Deque<T>::Deque(const Deque &other)
             }
         }
         try{
-            buckets_[number_buckets_-1] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+//            buckets_[number_buckets_-1] = new T[kFive]{T{0},T{0},T{0},T{0},T{0}};
+            void *rawMemory = operator new[] (kFive * sizeof(T));                    //
+            buckets_[number_buckets_-1] = static_cast<T*>(rawMemory);                //
         } catch (...) {
             for (int j = 0; j < number_buckets_-1; ++j) {
                 delete[]buckets_[j];
@@ -254,7 +263,6 @@ T &Deque<T>::operator[](size_t index) {
     int N_bucket = N_elem_from_zero / kFive;
     int N_cell = N_elem_from_zero % kFive;
     return buckets_[N_bucket][N_cell];
- //    return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
 template<class T>
@@ -263,7 +271,6 @@ const T &Deque<T>::operator[](size_t index) const {
     int N_bucket = N_elem_from_zero / kFive;
     int N_cell = N_elem_from_zero % kFive;
     return buckets_[N_bucket][N_cell];
-//    return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
 
@@ -277,7 +284,6 @@ T &Deque<T>::at(size_t
     int N_bucket = N_elem_from_zero / kFive;
     int N_cell = N_elem_from_zero % kFive;
     return buckets_[N_bucket][N_cell];
-    //return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
 template<class T>
@@ -289,7 +295,6 @@ const T &Deque<T>::at(size_t index) const {
     int N_bucket = N_elem_from_zero / kFive;
     int N_cell = N_elem_from_zero % kFive;
     return buckets_[N_bucket][N_cell];
-    //return buckets_[front_[0] + index / kFive][index % kFive];
 }
 
 
@@ -303,6 +308,11 @@ void Deque<T>::push_back(const T& value) {
             }
             try {
                 buckets_[0] = new T[kFive]{value, value, value, value, value};
+//                void *rawMemory = operator new[] (kFive * sizeof(T));
+//                buckets_[0] = static_cast<T*>(rawMemory);
+//                for (int j = 0; j < kFive; ++j) {
+//                    new(&buckets_[0])T(value);
+//                }
             } catch (...) {
                 throw;
             }
@@ -330,6 +340,11 @@ void Deque<T>::push_back(const T& value) {
                 buckets_ = new_buckets;
                 try {
                     buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
+//                    void *rawMemory = operator new[] (kFive * sizeof(T));
+//                    buckets_[number_buckets_] = static_cast<T*>(rawMemory);
+//                    for (int j = 0; j < kFive; ++j) {
+//                        new(&buckets_[number_buckets_])T(value);
+//                    }
                 } catch(...) {
                     delete[] buckets_[number_buckets_];
                     throw;
