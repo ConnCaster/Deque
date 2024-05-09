@@ -478,7 +478,7 @@ void Deque<T>::pop_back() {
         --size_;
         --number_buckets_;
     } else {
-        if ((rear_[0] >= front_[0])/* && (rear_[1] >= front_[1])*/) {
+        if ((rear_[0] >= front_[0])) {
             if ((rear_[0] == front_[0]) && (rear_[1] == front_[1])) {
                 delete[] buckets_[front_[0]];
                 front_ = {-1, 0};
@@ -497,11 +497,9 @@ template <class T>
 void Deque<T>::pop_front() {
     if (!buckets_ || size_ == 0 || number_buckets_ == 0) return;
     if (front_[1] == 4) {
-//        delete[] buckets_[0];
         if (number_buckets_ > 1) {
             front_[1] = 0;
             front_[0] = 1;
-//            --rear_[0];
         } else {
             front_[0] = -1;
             front_[1] = 0;
@@ -509,9 +507,8 @@ void Deque<T>::pop_front() {
             rear_[1] = 0;
         }
         --size_;
-//        --number_buckets_;
     } else {
-        if ((rear_[0] >= front_[0]) /*&& (rear_[1] >= front_[1])*/) {
+        if ((rear_[0] >= front_[0])) {
             if ((rear_[0] == front_[0]) && (rear_[1] == front_[1])) {
                 delete[] buckets_[front_[0]];
                 front_ = {-1, 0};
@@ -525,17 +522,3 @@ void Deque<T>::pop_front() {
         }
     }
 }
-
-//template <class T>
-//void Deque<T>::pop_front() {
-//    if (front_.second == kFive - 1) {
-//        buckets_[front_.first][front_.second] = nullptr;
-//        ++front_.first;
-//        front_.second = 0;
-//        --size_;
-//    } else {
-//        buckets_[front_.first][front_.second] = nullptr;
-//        ++front_.second;
-//        --size_;
-//    }
-//}
