@@ -467,3 +467,152 @@ TEST_CASE("PopBack", "[Deque][Pop]") {
         CHECK(dq.get_rear()[1] == 4);
     }
 }
+
+TEST_CASE("PopFront", "[Deque][Pop]") {
+    {
+        Deque<int> dq{1};
+        CHECK(dq.size() == 1);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.pop_front();
+        CHECK(dq.size() == 0);
+        CHECK(dq.get_buckets_number() == 0);
+        CHECK(dq.get_front()[0] == -1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == -1);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+    {
+        Deque<int> dq{2};
+        CHECK(dq.size() == 2);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 1);
+
+        dq.pop_front();
+        CHECK(dq.size() == 1);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 1);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 1);
+    }
+    {
+        Deque<int> dq{5};
+        CHECK(dq.size() == 5);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+
+        dq.pop_front();
+        CHECK(dq.size() == 4);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 1);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+    }
+    {
+        Deque<int> dq{6};
+        CHECK(dq.size() == 6);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.pop_front();
+        CHECK(dq.size() == 5);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 1);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+    {
+        Deque<int> dq{};
+        CHECK(dq.size() == 0);
+        CHECK(dq.get_buckets_number() == 0);
+        CHECK(dq.get_front()[0] == -1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == -1);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.push_front(99);
+        CHECK(dq[0] == 99);
+        CHECK(dq.size() == 1);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 4);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+
+        dq.pop_front();
+        CHECK(dq.size() == 0);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == -1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == -1);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+    {
+        Deque<int> dq{5};
+        CHECK(dq.size() == 5);
+        CHECK(dq.get_buckets_number() == 1);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 0);
+        CHECK(dq.get_rear()[1] == 4);
+
+        dq.push_front(99);
+        CHECK(dq[0] == 99);
+        CHECK(dq.size() == 6);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 4);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 4);
+
+        dq.pop_front();
+        CHECK(dq.size() == 5);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 4);
+    }
+    {
+        Deque<int> dq{6};
+        CHECK(dq.size() == 6);
+        CHECK(dq.get_buckets_number() == 2);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 1);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.push_front(99);
+        CHECK(dq[0] == 99);
+        CHECK(dq.size() == 7);
+        CHECK(dq.get_buckets_number() == 3);
+        CHECK(dq.get_front()[0] == 0);
+        CHECK(dq.get_front()[1] == 4);
+        CHECK(dq.get_rear()[0] == 2);
+        CHECK(dq.get_rear()[1] == 0);
+
+        dq.pop_front();
+        CHECK(dq.size() == 6);
+        CHECK(dq.get_buckets_number() == 3);
+        CHECK(dq.get_front()[0] == 1);
+        CHECK(dq.get_front()[1] == 0);
+        CHECK(dq.get_rear()[0] == 2);
+        CHECK(dq.get_rear()[1] == 0);
+    }
+}
