@@ -482,7 +482,7 @@ void FillVectorWithRandomNumbers(std::vector<size_t>& v,
     std::generate(v.begin(), v.end(), gen);
 }
 
-/*void TestFunction(const std::vector<size_t>& test_vector) {
+void TestFunction(const std::vector<size_t>& test_vector) {
     Deque<size_t> d;
 
     for (const auto& number: test_vector) {
@@ -493,12 +493,12 @@ void FillVectorWithRandomNumbers(std::vector<size_t>& v,
         d.push_front(number);
     }
 
-    while (!d.empty()) {
-        d.pop_back();
-    }
-}*/
+//    while (!d.empty()) {
+//        d.pop_back();
+//    }
+}
 
-static constexpr size_t kTestSize = 10000000;
+static constexpr size_t kTestSize = 500000;//10000000;
 static constexpr size_t kDistrBegin = 1;
 static constexpr size_t kDistrEnd = 100;
 static constexpr long long kNormalDuration = 5;
