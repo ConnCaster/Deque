@@ -307,12 +307,9 @@ void Deque<T>::push_back(const T& value) {
                 throw;
             }
             try {
-                buckets_[0] = new T[kFive]{value, value, value, value, value};
-//                void *rawMemory = operator new[] (kFive * sizeof(T));
-//                buckets_[0] = static_cast<T*>(rawMemory);
-//                for (int j = 0; j < kFive; ++j) {
-//                    new(&buckets_[0])T(value);
-//                }
+//                buckets_[0] = new T[kFive]{value, value, value, value, value};
+                void *rawMemory = operator new[] (kFive * sizeof(T));
+                buckets_[0] = static_cast<T*>(rawMemory);
             } catch (...) {
                 throw;
             }
@@ -339,12 +336,9 @@ void Deque<T>::push_back(const T& value) {
                 delete[] buckets_;
                 buckets_ = new_buckets;
                 try {
-                    buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
-//                    void *rawMemory = operator new[] (kFive * sizeof(T));
-//                    buckets_[number_buckets_] = static_cast<T*>(rawMemory);
-//                    for (int j = 0; j < kFive; ++j) {
-//                        new(&buckets_[number_buckets_])T(value);
-//                    }
+//                    buckets_[number_buckets_] = new T[kFive]{value, value, value, value, value};
+                    void *rawMemory = operator new[] (kFive * sizeof(T));
+                    buckets_[number_buckets_] = static_cast<T*>(rawMemory);
                 } catch(...) {
                     delete[] buckets_[number_buckets_];
                     throw;
@@ -382,7 +376,9 @@ void Deque<T>::push_front(const T& value) {
             throw;
         }
         try {
-            buckets_[0] = new T[kFive]{value, value, value, value, value};
+//            buckets_[0] = new T[kFive]{value, value, value, value, value};
+            void *rawMemory = operator new[] (kFive * sizeof(T));
+            buckets_[0] = static_cast<T*>(rawMemory);
         } catch (...) {
             throw;
         }
@@ -410,7 +406,9 @@ void Deque<T>::push_front(const T& value) {
             buckets_ = new_buckets;
 
             try {
-                buckets_[0] = new T[kFive]{value, value, value, value, value};
+//                buckets_[0] = new T[kFive]{value, value, value, value, value};
+                void *rawMemory = operator new[] (kFive * sizeof(T));
+                buckets_[0] = static_cast<T*>(rawMemory);
             } catch(...) {
                 delete[] buckets_[number_buckets_];
                 throw;
