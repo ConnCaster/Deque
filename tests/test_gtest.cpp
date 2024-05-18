@@ -275,54 +275,54 @@ TEST(DequeAccess, StaticAsserts) {
     EXPECT_FALSE(noexcept(defaulted.at(0)));
 }
 
-//TEST(DequeItetators, StaticAsserts) {
-//    IteratorTest<Deque<int>::iterator, int>();
-//    IteratorTest<decltype(std::declval<Deque<int>>().rbegin()), int>();
-//    IteratorTest<decltype(std::declval<Deque<int>>().cbegin()), const int>();
-//}
-//
-//TEST(DequtIterators, Arithmetic) {
-//    {
-//        Deque<int> empty;
-//
-//        EXPECT_EQ(empty.end() - empty.begin(), 0);
-//        EXPECT_EQ(empty.begin() + 0, empty.end());
-//        EXPECT_EQ(empty.end() - 0, empty.begin());
-//
-//        EXPECT_EQ(empty.rend() - empty.rbegin(), 0);
-//        EXPECT_EQ(empty.rbegin() + 0, empty.rend());
-//        EXPECT_EQ(empty.rend() - 0, empty.rbegin());
-//
+TEST(DequeItetators, StaticAsserts) {
+    IteratorTest<Deque<int>::iterator, int>();
+    IteratorTest<decltype(std::declval<Deque<int>>().rbegin()), int>();
+    IteratorTest<decltype(std::declval<Deque<int>>().cbegin()), const int>();
+}
+
+TEST(DequtIterators, Arithmetic) {
+    {
+        Deque<int> empty;
+
+        EXPECT_EQ(empty.end() - empty.begin(), 0);
+        EXPECT_EQ(empty.begin() + 0, empty.end());
+        EXPECT_EQ(empty.end() - 0, empty.begin());
+
+        EXPECT_EQ(empty.rend() - empty.rbegin(), 0);
+        EXPECT_EQ(empty.rbegin() + 0, empty.rend());
+        EXPECT_EQ(empty.rend() - 0, empty.rbegin());
+
 //        EXPECT_EQ(empty.cend() - empty.cbegin(), 0);
 //        EXPECT_EQ(empty.cbegin() + 0, empty.cend());
 //        EXPECT_EQ(empty.cend() - 0, empty.cbegin());
-//    }
-//
-//    {
-//        Deque<int> one(1);
-//        auto iter = one.end();
-//
-//        EXPECT_EQ(--iter, one.begin());
-//        EXPECT_EQ(iter++, one.begin());
-//    }
-//
-//    {
-//        Deque<int> d(1000, 3);
-//
-//        EXPECT_EQ(size_t(d.end() - d.begin()), d.size());
-//        EXPECT_EQ(d.begin() + d.size(), d.end());
-//        EXPECT_EQ(d.end() - d.size(), d.begin());
-//    }
-//}
-//
-//TEST(DequtIterators, Comparison) {
-//    Deque<int> d(1000, 3);
-//
-//    EXPECT_TRUE(d.end() > d.begin());
+    }
+
+    {
+        Deque<int> one(1);
+        auto iter = one.end();
+
+        EXPECT_EQ(--iter, one.begin());
+        EXPECT_EQ(iter++, one.begin());
+    }
+
+    {
+        Deque<int> d(1000, 3);
+
+        EXPECT_EQ(size_t(d.end() - d.begin()), d.size());
+        EXPECT_EQ(d.begin() + d.size(), d.end());
+        EXPECT_EQ(d.end() - d.size(), d.begin());
+    }
+}
+
+TEST(DequtIterators, Comparison) {
+    Deque<int> d(1000, 3);
+
+    EXPECT_TRUE(d.end() > d.begin());
 //    EXPECT_TRUE(d.cend() > d.cbegin());
-//    EXPECT_TRUE(d.rend() > d.rbegin());
-//}
-//
+    EXPECT_TRUE(d.rend() > d.rbegin());
+}
+
 //TEST(DequeIterators, Algorithm) {
 //    Deque<int> d(1000, 3);
 //
@@ -335,7 +335,7 @@ TEST(DequeAccess, StaticAsserts) {
 //
 //    EXPECT_EQ(sorted_border - d.begin(), 500);
 //}
-//
+
 //TEST(DequeModification, PushAndPop) {
 //    Deque<NotDefaultConstructible> d(10000, {1});
 //    int start_size = static_cast<int>(d.size());

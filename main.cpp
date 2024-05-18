@@ -1,8 +1,10 @@
 #include <iostream>
 #include "deque.hpp"
+#include <deque>
 
 int main() {
     Deque<int> dq;
+    std::deque<int> d;
     dq.push_front(1);
     dq.push_front(2);
     dq.push_front(3);
