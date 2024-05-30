@@ -234,7 +234,7 @@ public:
     }
 
     ConstReverseIterator rbegin() const {
-        return ReverseIterator(end());
+        return ConstReverseIterator(end());
     }
 
     ReverseIterator rend() {
@@ -242,13 +242,10 @@ public:
     }
 
     ConstReverseIterator rend() const {
-        return ReverseIterator(begin());
+        return ConstReverseIterator(begin());
     }
 
     void insert(iterator it, const T& value) {
-        if (!it.ptr_dq) {
-            it.ptr_dq;
-        }
         it.ptr_dq->push_back(value);
         for (auto iter = it.ptr_dq->end()-1; iter > it; --iter) {
             *iter = *(iter-1);
