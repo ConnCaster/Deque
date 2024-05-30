@@ -175,19 +175,19 @@ TEST(DequeConstructors, WithSize) {
     {
         Deque<int> simple(size);
         EXPECT_EQ(simple.size(), size);
-//        EXPECT_TRUE(std::all_of(simple.begin(),
-//                                simple.end(),
-//                                [](int item) { return item == 0; }));
+        EXPECT_TRUE(std::all_of(simple.begin(),
+                                simple.end(),
+                                [](int item) { return item == 0; }));
     }
 
     {
         Deque<NotDefaultConstructible> less_simple(size, value);
         EXPECT_EQ(less_simple.size(), size);
-//        EXPECT_TRUE(std::all_of(less_simple.begin(),
-//                                less_simple.end(),
-//                                [value = value](const auto& item) {
-//                                    return item.data == value;
-//                                }));
+        EXPECT_TRUE(std::all_of(less_simple.begin(),
+                                less_simple.end(),
+                                [value = value](const auto& item) {
+                                    return item.data == value;
+                                }));
     }
 
 }
@@ -293,9 +293,9 @@ TEST(DequtIterators, Arithmetic) {
         EXPECT_EQ(empty.rbegin() + 0, empty.rend());
         EXPECT_EQ(empty.rend() - 0, empty.rbegin());
 
-//        EXPECT_EQ(empty.cend() - empty.cbegin(), 0);
-//        EXPECT_EQ(empty.cbegin() + 0, empty.cend());
-//        EXPECT_EQ(empty.cend() - 0, empty.cbegin());
+        EXPECT_EQ(empty.cend() - empty.cbegin(), 0);
+        EXPECT_EQ(empty.cbegin() + 0, empty.cend());
+        EXPECT_EQ(empty.cend() - 0, empty.cbegin());
     }
 
     {
@@ -319,107 +319,107 @@ TEST(DequtIterators, Comparison) {
     Deque<int> d(1000, 3);
 
     EXPECT_TRUE(d.end() > d.begin());
-//    EXPECT_TRUE(d.cend() > d.cbegin());
+    EXPECT_TRUE(d.cend() > d.cbegin());
     EXPECT_TRUE(d.rend() > d.rbegin());
 }
 
-//TEST(DequeIterators, Algorithm) {
-//    Deque<int> d(1000, 3);
-//
-//    std::iota(d.begin(), d.end(), 13);
-//    std::mt19937 g(31415);
-//    std::shuffle(d.begin(), d.end(), g);
-//    std::sort(d.rbegin(), d.rbegin() + 500);
-//    std::reverse(d.begin(), d.end());
-//    auto sorted_border = std::is_sorted_until(d.begin(), d.end());
-//
-//    EXPECT_EQ(sorted_border - d.begin(), 500);
-//}
+TEST(DequeIterators, Algorithm) {
+    Deque<int> d(1000, 3);
 
-//TEST(DequeModification, PushAndPop) {
-//    Deque<NotDefaultConstructible> d(10000, {1});
-//    int start_size = static_cast<int>(d.size());
-//
-//    auto middle_iter = d.begin() + (start_size / 2); // 5000
-//    auto& middle_element = *middle_iter;
-//    auto begin = d.begin();
-//    auto end = d.rbegin();
-//
-//    auto middle2_iter = middle_iter + 2000; // 7000
-//
-//    // remove 400 elements
-//    for (size_t i = 0; i < 400; ++i) {
-//        d.pop_back();
-//    }
-//
-//    // begin and middle iterators are still valid
-//    EXPECT_TRUE(begin->data == 1);
-//    EXPECT_TRUE(middle_iter->data == 1);
-//    EXPECT_TRUE(middle_element.data == 1);
-//    EXPECT_TRUE(middle2_iter->data == 1);
-//
-//    end = d.rbegin();
-//
-//    // 800 elemets removed in total
-//    for (size_t i = 0; i < 400; ++i) {
-//        d.pop_front();
-//    }
-//
-//    // and and middle iterators are still valid
-//    EXPECT_TRUE(end->data == 1);
-//    EXPECT_TRUE(middle_iter->data == 1);
-//    EXPECT_TRUE(middle_element.data == 1);
-//    EXPECT_TRUE(middle2_iter->data == 1);
-//
-//    // removed 9980 items in total
-//    for (size_t i = 0; i < 4590; ++i) {
-//        d.pop_front();
-//        d.pop_back();
-//    }
-//
-//    EXPECT_TRUE(d.size() == 20);
-//    EXPECT_TRUE(middle_element.data == 1);
-//    EXPECT_TRUE(middle_iter->data == 1 && middle_iter->data == 1);
-//    EXPECT_TRUE(std::all_of(d.begin(),
-//                            d.end(),
-//                            [](const auto& item) { return item.data == 1; }));
-//
-//    auto& begin_ref = *d.begin();
-//    auto& end_ref = *d.rbegin();
-//
-//    for (size_t i = 0; i < 5500; ++i) {
-//        d.push_back({2});
-//        d.push_front({2});
-//    }
-//
-//    EXPECT_TRUE((begin_ref).data == 1);
-//    EXPECT_TRUE((end_ref).data == 1);
-//    EXPECT_TRUE(d.begin()->data == 2);
-//    EXPECT_TRUE(d.size() == 5500 * 2 + 20);
-//}
-//
-//TEST(DequeModification, InsertAndErase) {
-//    Deque<NotDefaultConstructible> d(10000, {1});
-//    auto start_size = d.size();
-//
-//    d.insert(d.begin() + static_cast<int>(start_size) / 2,
-//             NotDefaultConstructible{2});
-//    EXPECT_TRUE(d.size() == start_size + 1);
-//    d.erase(d.begin() + static_cast<int>(start_size) / 2 - 1);
-//    EXPECT_TRUE(d.size() == start_size);
-//
-//    EXPECT_TRUE(size_t(std::count(d.begin(), d.end(), NotDefaultConstructible{1}))
-//                == start_size - 1);
-//    EXPECT_TRUE(std::count(d.begin(), d.end(), NotDefaultConstructible{2}) == 1);
-//
-//    Deque<NotDefaultConstructible> copy;
-//    for (const auto& item: d) {
-//        copy.insert(copy.end(), item);
-//    }
-//
-//    EXPECT_TRUE(d.size() == copy.size());
-//    EXPECT_TRUE(std::equal(d.begin(), d.end(), copy.begin()));
-//}
+    std::iota(d.begin(), d.end(), 13);
+    std::mt19937 g(31415);
+    std::shuffle(d.begin(), d.end(), g);
+    std::sort(d.rbegin(), d.rbegin() + 500);
+    std::reverse(d.begin(), d.end());
+    auto sorted_border = std::is_sorted_until(d.begin(), d.end());
+
+    EXPECT_EQ(sorted_border - d.begin(), 500);
+}
+
+TEST(DequeModification, PushAndPop) {
+    Deque<NotDefaultConstructible> d(10000, {1});
+    int start_size = static_cast<int>(d.size());
+
+    auto middle_iter = d.begin() + (start_size / 2); // 5000
+    auto& middle_element = *middle_iter;
+    auto begin = d.begin();
+    auto end = d.rbegin();
+
+    auto middle2_iter = middle_iter + 2000; // 7000
+
+    // remove 400 elements
+    for (size_t i = 0; i < 400; ++i) {
+        d.pop_back();
+    }
+
+    // begin and middle iterators are still valid
+    EXPECT_TRUE(begin->data == 1);
+    EXPECT_TRUE(middle_iter->data == 1);
+    EXPECT_TRUE(middle_element.data == 1);
+    EXPECT_TRUE(middle2_iter->data == 1);
+
+    end = d.rbegin();
+
+    // 800 elemets removed in total
+    for (size_t i = 0; i < 400; ++i) {
+        d.pop_front();
+    }
+
+    // and and middle iterators are still valid
+    EXPECT_TRUE(end->data == 1);
+    EXPECT_TRUE(middle_iter->data == 1);
+    EXPECT_TRUE(middle_element.data == 1);
+    EXPECT_TRUE(middle2_iter->data == 1);
+
+    // removed 9980 items in total
+    for (size_t i = 0; i < 4590; ++i) {
+        d.pop_front();
+        d.pop_back();
+    }
+
+    EXPECT_TRUE(d.size() == 20);
+    EXPECT_TRUE(middle_element.data == 1);
+    EXPECT_TRUE(middle_iter->data == 1 && middle_iter->data == 1);
+    EXPECT_TRUE(std::all_of(d.begin(),
+                            d.end(),
+                            [](const auto& item) { return item.data == 1; }));
+
+    auto& begin_ref = *d.begin();
+    auto& end_ref = *d.rbegin();
+
+    for (size_t i = 0; i < 5500; ++i) {
+        d.push_back({2});
+        d.push_front({2});
+    }
+
+    EXPECT_TRUE((begin_ref).data == 1);
+    EXPECT_TRUE((end_ref).data == 1);
+    EXPECT_TRUE(d.begin()->data == 2);
+    EXPECT_TRUE(d.size() == 5500 * 2 + 20);
+}
+
+TEST(DequeModification, InsertAndErase) {
+    Deque<NotDefaultConstructible> d(10000, {1});
+    auto start_size = d.size();
+
+    d.insert(d.begin() + static_cast<int>(start_size) / 2,
+             NotDefaultConstructible{2});
+    EXPECT_TRUE(d.size() == start_size + 1);
+    d.erase(d.begin() + static_cast<int>(start_size) / 2 - 1);
+    EXPECT_TRUE(d.size() == start_size);
+
+    EXPECT_TRUE(size_t(std::count(d.begin(), d.end(), NotDefaultConstructible{1}))
+                == start_size - 1);
+    EXPECT_TRUE(std::count(d.begin(), d.end(), NotDefaultConstructible{2}) == 1);
+
+    Deque<NotDefaultConstructible> copy;
+    for (const auto& item: d) {
+        copy.insert(copy.end(), item);
+    }
+
+    EXPECT_TRUE(d.size() == copy.size());
+    EXPECT_TRUE(std::equal(d.begin(), d.end(), copy.begin()));
+}
 
 TEST(DequeModification, PushFrontOnly) {
     Deque<size_t> d(5, 10);

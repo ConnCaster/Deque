@@ -12,13 +12,14 @@ const double kFiveDouble = 1000.0;
 template<typename T>
 class Deque;
 
-template<typename T>
-class Iterator {
+template<typename T, bool isConst>
+class MyIterator {
 private:
+
     friend class Deque<T>;
 
-    Deque<T> *ptr_dq;
     size_t index;
+    Deque<T> *ptr_dq;
 public:
     using iterator_category = std::random_access_iterator_tag;
     using difference_type = std::ptrdiff_t;
@@ -27,133 +28,123 @@ public:
     using reference = T &;
 
 
-    Iterator() : ptr_dq{nullptr}, index{0} {}
+    MyIterator() : ptr_dq(nullptr), index{0} {}
 
-    Iterator(Deque<T>& deque, size_t index) : ptr_dq{&deque}, index{index} {}
+    MyIterator(Deque<T>* deque, size_t index) : ptr_dq(deque), index(index) {}
 
-    Iterator(const Iterator &p) :
-            ptr_dq{p.ptr_dq}, index{p.index} {}
+    MyIterator(MyIterator&& ) noexcept = default;
+    MyIterator& operator=(MyIterator&&) noexcept = default;
 
-    Iterator operator=(const Iterator &p) {
-        if (this == &p) return *this;
-        ptr_dq = p.ptr_dq;
-        index = p.index;
+    MyIterator(const MyIterator &p) = default;
+    MyIterator& operator=(const MyIterator &p) = default;
+
+    template<typename U, bool WasConst, typename = std::enable_if_t<isConst && !WasConst>>
+    explicit MyIterator(MyIterator<U, WasConst> p)
+            : index(p.get_index()) {}
+
+    auto get_index() const {
+        return index;
+    }
+
+    MyIterator &operator++() {
+        index++;
         return *this;
     }
 
 
-    Iterator &operator++() {
+    MyIterator operator++(int) {
+        MyIterator tmp = *this;
         index++;
-        ptr_dq = &(ptr_dq[index]);
-        return *this;
-    }
-
-//    Iterator& operator++() const{
-//        ptr_dq++;
-//        return *this;
-//    }
-
-    Iterator operator++(int) {
-        Iterator tmp = *this;
-        index++;
-        ptr_dq = &(ptr_dq[index]);
         return tmp;
     }
 
-//    Iterator operator++(int) const {
-//        Iterator tmp = *this;
-//        ++(*this);
-//        return tmp;
-//    }
-
-    Iterator &operator--() {
+    MyIterator &operator--() {
         index--;
-        ptr_dq = &(ptr_dq[index]);
         return *this;
     }
 
-//    Iterator& operator--() const {
-//        ptr_dq--;
-//        return *this;
-//    }
 
-    Iterator operator--(int) {
-        Iterator tmp = *this;
+    MyIterator operator--(int) {
+        MyIterator tmp = *this;
         index--;
-        ptr_dq = &(ptr_dq[index]);
         return tmp;
     }
 
-//    Iterator operator--(int) const {
-//        Iterator tmp = *this;
-//        --(*this);
-//        return tmp;
-//    }
 
     T &operator*() {
-        return *ptr_dq[index];
+        return (*ptr_dq)[index];
+    }
+
+    const T &operator*() const {
+        return (*ptr_dq)[index];
     }
 
     T *operator->() {
-        return ptr_dq[index];
+        return &((*ptr_dq)[index]);
     }
 
+    const T *operator->() const {
+        return &((*ptr_dq)[index]);
+    }
 
-    friend Iterator operator+(const Iterator &it, const difference_type &n) {
-        Iterator tmp = it;
+    friend MyIterator operator+(const MyIterator &it, const difference_type &n) {
+        MyIterator tmp = it;
         tmp += n;
         return tmp;
     }
 
-    friend Iterator operator-(const Iterator &it, const difference_type &n) {
-        Iterator tmp = it;
+    friend MyIterator operator-(const MyIterator &it, const difference_type &n) {
+        MyIterator tmp = it;
         tmp -= n;
         return tmp;
     }
 
 
-    Iterator& operator+=(const difference_type& value) {
+    MyIterator& operator+=(const difference_type& value) {
         index += value;
-        ptr_dq = &(ptr_dq[index]);
         return *this;
     }
 
-    Iterator& operator-=(const difference_type& value) {
+    MyIterator& operator-=(const difference_type& value) {
         index -= value;
-        ptr_dq = &(ptr_dq[index]);
         return *this;
     }
 
-    friend difference_type operator-(const Iterator& a, const Iterator& b) {
+    friend difference_type operator-(const MyIterator& a, const MyIterator& b) {
         return a.index - b.index;
     }
 
-
-    friend bool operator<(const Iterator& a, const Iterator& b) {
+    friend bool operator<(const MyIterator& a, const MyIterator& b) {
         return a.index < b.index;
     }
 
-    friend bool operator>(const Iterator& a, const Iterator& b) {
+    friend bool operator>(const MyIterator& a, const MyIterator& b) {
         return a.index > b.index;
     }
 
-    friend bool operator<=(const Iterator& a, const Iterator& b) {
+    friend bool operator<=(const MyIterator& a, const MyIterator& b) {
         return a.index <= b.index;
     }
 
-    friend bool operator>=(const Iterator& a, const Iterator& b) {
+    friend bool operator>=(const MyIterator& a, const MyIterator& b) {
         return a.index >= b.index;
     }
 
-    friend bool operator==(const Iterator& a, const Iterator& b) {
+    friend bool operator==(const MyIterator& a, const MyIterator& b) {
         return a.index == b.index;
     }
 
-    friend bool operator!=(const Iterator& a, const Iterator& b) {
+    friend bool operator!=(const MyIterator& a, const MyIterator& b) {
         return a.index != b.index;
     }
-
 };
+
+template <typename T>
+using Iterator = MyIterator<T, false>;
+template <typename T>
+using ConstIterator = MyIterator<const T, true>;
+
+
 
 template<class T>
 class Deque {
@@ -202,101 +193,75 @@ public:
         return rear_;
     }
 
-
     using iterator = Iterator<T>;
+    using constIterator = ConstIterator<const T>;
+    using ReverseIterator = std::reverse_iterator<iterator>;
+    using ConstReverseIterator = std::reverse_iterator<constIterator>;
 
-    using _Iterator = Deque<T>::iterator;
-    using _Const_Iterator = Deque<const T>::iterator;
-    using _ReverseIterator = std::reverse_iterator<_Iterator>;
-    using _Const_ReverseIterator = std::reverse_iterator<_Const_Iterator>;
-
-    _Iterator begin() {
-        if (front_[0] == -1) return _Iterator();
-        return _Iterator(*this, 0);
+    iterator begin() {
+//        if (front_[0] == -1) return iterator(this, 0);
+        return iterator(this, 0);
     }
 
-    _Const_Iterator begin() const {
-        if (front_[0] == -1) return _Const_Iterator();
-        return _Const_Iterator(*this, 0);
+    iterator begin() const {
+//        if (front_[0] == -1) return iterator();
+        return iterator(this, 0);
     }
 
-    _Iterator end() {
-        if (rear_[0] == -1) return _Iterator();
-        return _Iterator(*this, this->size_);
+    iterator end() {
+//        if (rear_[0] == -1) return iterator();
+        return iterator(this, this->size_);
     }
 
-    _Const_Iterator end() const {
-        if (rear_[0] == -1) return _Const_Iterator();
-        return _Const_Iterator(*this, this->size_);
+    iterator end() const {
+//        if (rear_[0] == -1) return iterator/*<false>*/();
+        return iterator(this, this->size_);
     }
 
-    _Const_Iterator cbegin() const {
-        if (front_[0] == -1) return _Const_Iterator();
-        return _Const_Iterator(*this, 0);
+    constIterator cbegin() {
+        return constIterator(begin());
     }
 
-    _Const_Iterator cend() const {
-        if (rear_[0] == -1) return _Const_Iterator();
-        return _Const_Iterator(*this, this->size_);
+    constIterator cend() {
+        return constIterator(end());
     }
 
 
     //=============================================================
 
-    _ReverseIterator rbegin() {
-        return _ReverseIterator(end());
-    }
-
-    _Const_ReverseIterator rbegin() const {
+    ReverseIterator rbegin() {
         return ReverseIterator(end());
     }
 
-    _ReverseIterator rend() {
-        return _ReverseIterator(begin());
-    }
-
-    _Const_ReverseIterator rend() const {
-        return ReverseIterator(begin());
-    }
-
-    _Const_ReverseIterator rcbegin() const {
+    ConstReverseIterator rbegin() const {
         return ReverseIterator(end());
     }
-
-    _Const_ReverseIterator rcend() const {
-        return ReverseIterator(begin());
-    }
-
-    /*ReverseIterator rbegin() {
-        if (rear_[0] == -1) return ReverseIterator();
-        return ReverseIterator(&buckets_[rear_[0]][rear_[1]]);
-    }
-
-    Const_ReverseIterator rbegin() const {
-        if (rear_[0] == -1) return Const_ReverseIterator();
-        return Const_ReverseIterator(&buckets_[rear_[0]][rear_[1]]);
-    }
-
 
     ReverseIterator rend() {
-        if (front_[0] == -1) return ReverseIterator();
-        return ReverseIterator(&buckets_[front_[0]][front_[1]]);
+        return ReverseIterator(begin());
     }
 
-    Const_ReverseIterator rend() const {
-        if (front_[0] == -1) return Const_ReverseIterator();
-        return Const_ReverseIterator(&buckets_[front_[0]][front_[1]]);
+    ConstReverseIterator rend() const {
+        return ReverseIterator(begin());
     }
 
-    Const_ReverseIterator rcbegin() const {
-        if (rear_[0] == -1) return Const_ReverseIterator();
-        return Const_ReverseIterator(&buckets_[rear_[0]][rear_[1]]);
+    void insert(iterator it, const T& value) {
+        if (!it.ptr_dq) {
+            it.ptr_dq;
+        }
+        it.ptr_dq->push_back(value);
+        for (auto iter = it.ptr_dq->end()-1; iter > it; --iter) {
+            *iter = *(iter-1);
+        }
+        *it = value;
     }
 
-    Const_ReverseIterator rcend() const {
-        if (front_[0] == -1) return Const_ReverseIterator();
-        return Const_ReverseIterator(&buckets_[front_[0]][front_[1]]);
-    }*/
+    void erase(iterator it) {
+        for (auto iter = it; iter < it.ptr_dq->end() - 1; ++iter) {
+            *iter = *(iter+1);
+        }
+        it.ptr_dq->pop_back();
+    }
 
 
 private:
@@ -306,6 +271,9 @@ private:
     std::array<long, 2> rear_;
     T **buckets_;
 };
+
+
+
 
 
 template<class T>
@@ -542,6 +510,7 @@ const T &Deque<T>::at(size_t index) const {
 template<class T>
 void Deque<T>::push_back(const T &value) {
     if (!buckets_) {
+//    if (front_[0] == rear_[0] && front_[1] == rear_[1]) {
         try {
             buckets_ = new T *[1];
         } catch (...) {
@@ -633,7 +602,7 @@ void Deque<T>::push_front(const T &value) {
         front_ = {0, kFive - 1};
         rear_ = {0, kFive - 1};
     } else {
-        if (front_[0] == 0 && front_[1] == 0) {
+        if (/*front_[0] == 0 && */front_[1] == 0) {
             T **new_buckets = nullptr;
             try {
                 new_buckets = new T *[number_buckets_ + 1];
